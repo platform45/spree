@@ -118,8 +118,25 @@ def generate_visualization(directory=None):
     # Generate visualization
     print(f"Generating visualization for {entry_point}...")
     try:
-        # Run dep-tree entropy command
-        subprocess.run(["dep-tree", "entropy", entry_point], check=True)
+        # Create output directory
+        output_dir = "blast_radius_output"
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # Generate the visualization with enhanced options
+        subprocess.run([
+            "dep-tree", 
+            "entropy", 
+            entry_point,
+            "--output", f"{output_dir}/dependency_graph.html",
+            "--depth", "5",  # Limit depth for better performance
+            "--include", "*.rb",  # Focus on Ruby files
+        ], check=True)
+        
+        # Open the visualization in the browser
+        html_path = os.path.abspath(f"{output_dir}/dependency_graph.html")
+        print(f"Visualization saved to: {html_path}")
+        webbrowser.open(f"file://{html_path}")
+        
         print("Visualization generated successfully!")
         return True
     except subprocess.CalledProcessError as e:
